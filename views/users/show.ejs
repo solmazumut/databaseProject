@@ -6,9 +6,6 @@
 </div>
 <% if (productsByUser.length > 0) { %>
     <h2>Products by User</h2>
-
-        <% productsByUser.forEach(product => { %>
-            <img height="150" width="100" src="<%= product.imagePath %>">
-        <% }) %> 
+        <%- include('../partials/productGrid', { products: productsByUser})  %> 
 
 <% } %>

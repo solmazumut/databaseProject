@@ -14,10 +14,14 @@
 </form>
 <br>
 <% users.forEach(user => { %>
-    <div><%= user.email %>
-    <div class="btn-row">
-        <a class="btn btn-primary" href="/users/<%= user.id %>">View</a>
-        <a class="btn btn-primary" href="/users/<%= user.id %>/edit">Edit</a>
-        <%- include('../partials/deleteForm', {url: `/users/${user.id}` }) %>
-    </div> 
+    <div class="user-row">
+
+        <div class="user-name"><%= user.name %></div>
+
+        <div class="btn-row">
+            <a class="btn btn-primary" href="/users/<%= user.id %>">View</a>
+            <a class="btn btn-primary" href="/users/<%= user.id %>/edit">Edit</a>
+            <%- include('../partials/deleteForm', {url: `/users/${user.id}` }) %>
+        </div> 
+    </div>
 <% }) %> 
