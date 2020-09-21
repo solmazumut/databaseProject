@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
-const path = require('path')
-const ImageBasePath = 'uploads/productImages'
+
 
 const productSchema = new mongoose.Schema({
     title: {
@@ -17,8 +16,11 @@ const productSchema = new mongoose.Schema({
     bartyValue:{
         type: Number
     },
-    imageName: {
-        type: String
+    image: {
+        type: Buffer
+    },
+    imageType:{
+        type: String,
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -27,10 +29,9 @@ const productSchema = new mongoose.Schema({
 })
 
 productSchema.virtual('imagePath').get(function(){
-    if(this.imageName != null) {
-        return path.join('/', ImageBasePath, this.imageName)
+    if(this.image != null && this.imageType != null) {
+        return `data:${this.imageType};charset=utf-8;base64,${this.image.toString('base64')}`
     }
 })
 
 module.exports = mongoose.model('Product', productSchema)
-module.exports.ImageBasePath = ImageBasePath

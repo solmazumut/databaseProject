@@ -1,19 +1,10 @@
 const express = require('express')
 const router = express.Router()
-const multer = require('multer')
-const path = require('path')
-const fs = require('fs')
+
 const Product = require('../models/product')
 const User = require('../models/user')
-const { remove } = require('../models/product')
-const uploadPath = path.join('public', Product.ImageBasePath)
+
 const imageMimeTypes = ['image/jpeg', 'image/png', 'image/gif']
-const upload = multer({
-    dest: uploadPath,
-    fileFilter: (req, file, callback) => {
-        callback(null, imageMimeTypes.includes(file.mimetype))
-    }
-})
 
 //All Products Route
 router.get('/', async (req,res)=>{
@@ -45,33 +36,24 @@ router.get('/new', async (req,res)=>{
 })
 
 // Create Product Route
-router.post('/', upload.single('Image'), async (req,res) => {
+router.post('/', async (req,res) => {
     const fileName = req.file != null ? req.file.filename : null
     const product = new Product({
         title: req.body.title,
         user: req.body.user,
         createdAt: new Date(req.body.createdAt),
         bartyValue: req.body.bartyValue,
-        imageName: fileName,
         description: req.body.description
     })
+    saveImage(product,req.body.Image)
     try{
     const newProduct = await product.save()
     //res.redirect(`products/${newProduct.id}`)
     res.redirect(`products`)
     } catch {
-    if(product.imageName != null) {
-        removeImage(product.imageName)
-    }  
     renderNewPage(res, product, true)
     }
 })
-
-function removeImage(filename){
-    fs.unlink(path.join(uploadPath, filename), error => {
-        if (error) console.error(error)
-    })
-}
 
 async function renderNewPage(res, product, hasError = false) {
     try {
@@ -84,6 +66,15 @@ async function renderNewPage(res, product, hasError = false) {
         res.render('products/new', params)
     } catch {
         res.redirect('/products')
+    }
+}
+
+function saveImage(product, imageEncoded) {
+    if(imageEncoded == null) return
+    const image = JSON.parse(imageEncoded)
+    if(image != null && imageMimeTypes.includes(image.type)) {
+        product.image = new Buffer.from(image.data, 'base64')
+        product.imageType = image.type
     }
 }
 
