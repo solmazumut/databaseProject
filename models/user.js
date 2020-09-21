@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const Product = require('./product')
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -16,4 +17,15 @@ const userSchema = new mongoose.Schema({
     }
 })
 
+userSchema.pre('remove', function(next) {
+    Product.find({user: this.id }, (err, products) => {
+        if(err){
+            next(err)
+        } else if (products.length > 0) {
+            next(new Error('This user has products still'))
+        } else {
+            next()
+        }
+    })
+})
 module.exports = mongoose.model('User', userSchema)

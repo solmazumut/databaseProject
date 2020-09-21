@@ -7,10 +7,9 @@
 </form>
 <br>
 <% users.forEach(user => { %>
-    <div>
-        <%= user.name %> 
-        <%= user.surname %> 
-        <%= user.email %> 
-        <%= user.phoneNumber %> 
-    </div>
+    <div><%= user.email %></div> 
+    <a href="/users/<%= user.id %>">View</a>
+    <a href="/users/<%= user.id %>/edit">Edit</a>
+    <%- include('../partials/deleteForm', {url: `/users/${user.id}` }) %>
+    
 <% }) %> 
