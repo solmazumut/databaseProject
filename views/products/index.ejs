@@ -17,6 +17,8 @@
 </form>
 <div>
     <% products.forEach(product => { %>
-            <img height="150" width="100" src="<%= product.imagePath %>" >
+            <a href="/products/<%= product.id %>">
+                <img height="150" width="100" src="<%= product.imagePath %>" >
+            </a>
     <% }) %> 
 </div>

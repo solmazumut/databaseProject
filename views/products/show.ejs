@@ -1,0 +1,10 @@
+<h2><%= product.title %></h2>
+<img width="100" height="150" src="<%= product.imagePath %>">
+<div>User: <%= product.user.name %></div>
+<div>Publish Date: <%= product.createdAt.toDateString() %></div>
+<div>Barty Value: <%= product.bartyValue %></div>
+<div>Description: <%= product.description %></div>
+
+<a href="/products/<%= product.id %>/edit">Edit</a>
+<%- include('../partials/deleteForm', { url: `/products/${product.id}` }) %>
+<a href="/users/<%= product.user.id %>">View User</a>

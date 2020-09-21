@@ -48,26 +48,104 @@ router.post('/', async (req,res) => {
     saveImage(product,req.body.Image)
     try{
     const newProduct = await product.save()
-    //res.redirect(`products/${newProduct.id}`)
-    res.redirect(`products`)
+    res.redirect(`products/${newProduct.id}`)
     } catch {
     renderNewPage(res, product, true)
     }
 })
 
+//Show Product Route
+router.get('/:id', async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id).populate('user').exec()
+        res.render('products/show', {product: product})
+    } catch {
+        res.redirect('/')
+    }
+})
+
+//Edit Product Route
+router.get('/:id/edit', async (req,res)=>{
+    try {
+        const product = await Product.findById(req.params.id)
+        renderEditPage(res, product)
+    } catch {
+        res.redirect('/')
+    }
+})
+
+// Update Product Route
+router.put('/:id', async (req,res) => {
+    let product
+    try{
+        product = await Product.findById(req.params.id)
+        product.title = req.body.title
+        product.user = req.body.user
+        product.createdAt = new Date(req.body.createdAt)
+        product.bartyValue = req.body.bartyValue
+        product.description = req.body.description
+
+        if(req.body.Image != null && req.body.Image !== '') {
+            saveImage(product, req.body.Image)
+        }
+        await product.save()
+        res.redirect(`/products/${product.id}`)
+    } catch {
+        if(bool != null) {
+            renderEditPage(res, product, true)
+        } else {
+            redirect('/')
+        }
+        
+    }
+})
+
+router.delete('/:id', async (req, res) => {
+    let product
+    try {
+        product = await Product.findById(req.params.id)
+        await product.remove()
+        res.redirect('/products')
+    } catch {
+        if(product != null) {
+            res.render('product/show', {
+                product: product,
+                errorMessage: 'Could not remove product'
+            })
+        } else {
+            res.redirect('/')
+        }
+    }
+})
+
 async function renderNewPage(res, product, hasError = false) {
+    renderFormPage(res, product, 'new', hasError)
+}
+
+async function renderEditPage(res, product, hasError = false) {
+    renderFormPage(res, product, 'edit', hasError)
+}
+
+async function renderFormPage(res, product, form, hasError = false) {
     try {
         const users = await User.find({})
         const params = {
             users: users,
             product: product
         }
-        if(hasError) params.errorMessage = 'Error Creating Product'
-        res.render('products/new', params)
+        if(hasError){
+            if(form === 'edit') {
+                params.errorMessage = 'Error Updating Product'
+            } else {
+                params.errorMessage = 'Error Creating Product'
+            }
+        }
+        res.render(`products/${form}`, params)
     } catch {
         res.redirect('/products')
     }
 }
+
 
 function saveImage(product, imageEncoded) {
     if(imageEncoded == null) return
