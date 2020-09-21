@@ -1,8 +1,9 @@
 <h2 class="page-header"><%= user.name %></h2>
 <h2><%= user.email %></h2>
-<a href="/users/<%= user.id %>/edit">Edit</a>
-<%- include('../partials/deleteForm', { url: `users/${user.id}`}) %>
-
+<div class="btn-row">
+    <a href="/users/<%= user.id %>/edit" class="btn btn-primary">Edit</a>
+    <%- include('../partials/deleteForm', { url: `users/${user.id}`}) %>
+</div>
 <% if (productsByUser.length > 0) { %>
     <h2>Products by User</h2>
 

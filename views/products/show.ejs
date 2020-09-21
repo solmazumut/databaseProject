@@ -5,6 +5,6 @@
 <div>Barty Value: <%= product.bartyValue %></div>
 <div>Description: <%= product.description %></div>
 
-<a href="/products/<%= product.id %>/edit">Edit</a>
+<a href="/products/<%= product.id %>/edit" class="btn btn-primary">Edit</a>
 <%- include('../partials/deleteForm', { url: `/products/${product.id}` }) %>
-<a href="/users/<%= product.user.id %>">View User</a>
+<a href="/users/<%= product.user.id %>" class="btn btn-primary">View User</a>
